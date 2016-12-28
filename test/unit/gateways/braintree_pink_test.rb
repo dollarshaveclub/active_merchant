@@ -3,47 +3,16 @@ require 'test_helper'
 class BraintreePinkTest < Test::Unit::TestCase
   def setup
     @gateway = BraintreePinkGateway.new(
-      :access_token => 'ellies-access-token'
+      :access_token => 'test'
     )
   end
 
-
-  def test_payment_method_vaulting
-
-
-  end
-
-  def test_payment_method_nonce_stuff
-
-
-  end
-
-  def test_sale_transaction
-
-    Braintree::Transaction.expects(:purchase).
+  def test_authorize_transaction
+    Braintree::Transaction.expects(:sale).
       with('transaction_id', '10.00').
-      returns(braintree_result(:id => 'purchase_transaction_id'))
-    response = @gateway.purchase(1000, 'transaction_id', :test => true)
-    assert_equal 'purchase_transaction_id', response.authorization
-
-  end
-
-  def test_authorization_transaction
-
-
-  end
-
-  def test_capture_transaction
-
-
-  end
-
-  def test_refund_legacy_method_signature
-    Braintree::Transaction.expects(:refund).
-      with('transaction_id', nil).
-      returns(braintree_result(:id => "refund_transaction_id"))
-    response = @gateway.refund('transaction_id', :test => true)
-    assert_equal "refund_transaction_id", response.authorization
+      returns(braintree_result(:id => 'sale_transaction_id'))
+    response = @gateway.authorize(1000, 'transaction_id', :test => true)
+    assert_equal 'sale_transaction_id', response.authorization
   end
 
   def test_refund_method_signature
@@ -90,39 +59,6 @@ class BraintreePinkTest < Test::Unit::TestCase
     assert_equal Logger::WARN, Braintree::Configuration.logger.level
   end
 
-  def test_configured_logger_respects_any_custom_log_level_set_without_overwriting_it
-    with_braintree_configuration_restoration do
-      assert Braintree::Configuration.logger.level != Logger::DEBUG
-      Braintree::Configuration.logger.level = Logger::DEBUG
-
-      # Re-instatiate a gateway to show it doesn't affect the log level
-      BraintreePinkGateway.new(
-        :merchant_id => 'test',
-        :public_key => 'test',
-        :private_key => 'test'
-      )
-
-      assert_equal Logger::WARN, Braintree::Configuration.logger.level
-    end
-  end
-
-  def test_that_setting_a_wiredump_device_on_the_gateway_sets_the_braintree_logger_upon_instantiation
-    with_braintree_configuration_restoration do
-      logger = Logger.new(STDOUT)
-      ActiveMerchant::Billing::BraintreePinkGateway.wiredump_device = logger
-
-      assert_not_equal logger, Braintree::Configuration.logger
-
-      BraintreePinkGateway.new(
-        :merchant_id => 'test',
-        :public_key => 'test',
-        :private_key => 'test'
-      )
-
-      assert_equal logger, Braintree::Configuration.logger
-      assert_equal Logger::DEBUG, Braintree::Configuration.logger.level
-    end
-  end
 
   private
 
