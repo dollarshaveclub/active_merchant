@@ -1,6 +1,6 @@
 module BraintreeCommon
   def self.included(base)
-    base.supported_countries = ['US']
+    base.supported_countries = ['US', 'AU']
     base.supported_cardtypes = [:visa, :master, :american_express, :discover, :jcb, :diners_club]
     base.homepage_url = 'http://www.braintreepaymentsolutions.com'
     base.display_name = 'Braintree'
