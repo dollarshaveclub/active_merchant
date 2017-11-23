@@ -221,6 +221,7 @@ module ActiveMerchant #:nodoc:
       end
 
       def build_payment_method(payment_method, options)
+        puts payment_method.inspect
         result = payment_method
 
         # Build instance of the LitleCardToken class for internal use if this is a token request.
