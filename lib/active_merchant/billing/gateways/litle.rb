@@ -221,6 +221,7 @@ module ActiveMerchant #:nodoc:
       end
 
       def build_payment_method(payment_method, options)
+        puts "hotdog??"
         puts payment_method.inspect
         result = payment_method
 
