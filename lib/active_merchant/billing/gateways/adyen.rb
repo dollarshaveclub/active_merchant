@@ -36,6 +36,17 @@ module ActiveMerchant #:nodoc:
         super
       end
 
+      def store_with_cvv_check(payment, options = {})
+        requires!(options, :shopper_reference)
+        requires!(options, :recurring)
+        post = init_post(options)
+        add_payment(post, payment)
+        add_invoice(post, 0, options)
+        add_extra_data(post, options)
+        add_recurring_data(post, options)
+        commit('authorise', post)
+      end
+
       def store(payment, options = {})
         requires!(options, :shopper_reference)
         requires!(options, :recurring)
@@ -46,6 +57,7 @@ module ActiveMerchant #:nodoc:
         url = (test? ? test_token_url : live_token_url)
         commit('storeToken', post, url)
       end
+
 
       def purchase(money, payment, options={})
         MultiResponse.run do |r|
